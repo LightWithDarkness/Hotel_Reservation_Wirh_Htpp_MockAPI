@@ -1,41 +1,39 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { Reservation } from '../models/reservation';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReservationService {
 
-  constructor() {
-    let savedRservations = localStorage.getItem('reservations');
-    this.reservations = savedRservations? JSON.parse(savedRservations): [];
-   }
-
   private reservations: Reservation[] = [];
-  private saveReservations(): void {
-    localStorage.setItem('reservations', JSON.stringify(this.reservations))
-  }
+  private url = 'http://localhost:3001/reservation';
+
+  constructor(private http: HttpClient) { }
+
+
+
+
+ 
 
   //CRUD
-  getAllReservations(): Reservation[] {
-    return this.reservations;
+  getAllReservations(): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(`${this.url}/all`);
   }
-  getReservationById(id: string) {
-    return this.reservations.find(rsv => rsv.id === id)
+  getReservationById(id: string) :Observable<Reservation> {
+    return this.http.get<Reservation>(`${this.url}/${id}`);
   }
-  addReservation(reservation: Reservation) {
+  addReservation(reservation: Reservation): Observable<void> {
     reservation.id = Date.now().toString();
-    this.reservations.push(reservation);
-    this.saveReservations();
-
+    return this.http.post<void>(`${this.url}/new`,reservation);
   }
-  deleteReservation(id: string) {
-    this.reservations = this.reservations.filter(rsv => rsv.id !== id);
-    this.saveReservations();
+  deleteReservation(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.url}/delete/${id}`);
   }
-  updateReservation(reservation: Reservation) {
-    this.reservations = this.reservations.map(rsv => rsv.id === reservation.id ? reservation : rsv)
-    this.saveReservations();
+  updateReservation(reservation: Reservation) :Observable<void> { 
+    return this.http.put<void>(`${this.url}/add`,reservation);
   }
 
 

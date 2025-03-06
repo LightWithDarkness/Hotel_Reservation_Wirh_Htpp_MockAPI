@@ -1,5 +1,5 @@
 {
-  "name": "Hotel-Reservation-With-HttpClient-MockAPI",
+  "name": "hotel-reservation-with-httpclient-mockapi",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
